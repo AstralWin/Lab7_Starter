@@ -82,47 +82,54 @@ async function getRecipes() {
   //            function (we call these callback functions). That function will
   //            take two parameters - resolve, and reject. These are functions
   //            you can call to either resolve the Promise or Reject it.
-  let myPromise = new Promise(CBfunc);
-  return myPromise;
+  function myResolve(value){
+    console.log("Success",value);
+  }
+  function myReject(error){
+    console.error("Failed", error);
+  }
+
+  let myPromise = new Promise(async function(myResolve, myReject){
   /**************************/
   // A4-A11 will all be *inside* the callback function we passed to the Promise
   // we're returning
   /**************************/
-  async function CBfunc(myResolve, myReject) {
-  // A4. TODO - Loop through each recipe in the RECIPE_URLS array constant
-  //            declared above
+      // A4. TODO - Loop through each recipe in the RECIPE_URLS array constant
+      //            declared above
     for (var i = 0; i < RECIPE_URLS.length; i++){
-  // A5. TODO - Since we are going to be dealing with asynchronous code, create
-  //            a try / catch block. A6-A9 will be in the try portion, A10-A11
-  //            will be in the catch portion.
-  // A6. TODO - For each URL in that array, fetch the URL - MDN also has a great
-  //            article on fetch(). NOTE: Fetches are ASYNCHRONOUS, meaning that
-  //            you must either use "await fetch(...)" or "fetch.then(...)". This
-  //            function is using the async keyword so we recommend "await"
-  // A7. TODO - For each fetch response, retrieve the JSON from it using .json().
-  //            NOTE: .json() is ALSO asynchronous, so you will need to use
-  //            "await" again
-  // A8. TODO - Add the new recipe to the recipes array
-  // A9. TODO - Check to see if you have finished retrieving all of the recipes,
-  //            if you have, then save the recipes to storage using the function
-  //            we have provided. Then, pass the recipes array to the Promise's
-  //            resolve() method.
-  // A10. TODO - Log any errors from catch using console.error
-  // A11. TODO - Pass any errors to the Promise's reject() function
-      try{
-        let response = await fetch(RECIPE_URLS[i]);
-        let rjson = await response.json();
-        nrecipes.push(rjson);
-        if (i == RECIPE_URLS.length - 1) {
-          saveRecipesToStorage(nrecipes);
-          myResolve(nrecipes);
+      // A5. TODO - Since we are going to be dealing with asynchronous code, create
+      //            a try / catch block. A6-A9 will be in the try portion, A10-A11
+      //            will be in the catch portion.
+      // A6. TODO - For each URL in that array, fetch the URL - MDN also has a great
+      //            article on fetch(). NOTE: Fetches are ASYNCHRONOUS, meaning that
+      //            you must either use "await fetch(...)" or "fetch.then(...)". This
+      //            function is using the async keyword so we recommend "await"
+      // A7. TODO - For each fetch response, retrieve the JSON from it using .json().
+      //            NOTE: .json() is ALSO asynchronous, so you will need to use
+      //            "await" again
+      // A8. TODO - Add the new recipe to the recipes array
+      // A9. TODO - Check to see if you have finished retrieving all of the recipes,
+      //            if you have, then save the recipes to storage using the function
+      //            we have provided. Then, pass the recipes array to the Promise's
+      //            resolve() method.
+      // A10. TODO - Log any errors from catch using console.error
+      // A11. TODO - Pass any errors to the Promise's reject() function
+          try{
+            let response = await fetch(RECIPE_URLS[i]);
+            let rjson = await response.json();
+            nrecipes.push(rjson);
+            if (i == RECIPE_URLS.length - 1) {
+              saveRecipesToStorage(nrecipes);
+              myResolve(nrecipes);
+            }
+          } catch (err) {
+              console.error("Oh no, ", err);
+              myReject(err);
+          }
         }
-      } catch (err) {
-          console.error("Oh no, ", err);
-          myReject(err);
-      }
-    }
-  }
+  });
+  myPromise.then(myResolve, myReject);
+  return myPromise;
 }
 
 /**
