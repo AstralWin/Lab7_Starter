@@ -51,13 +51,6 @@ function initializeServiceWorker() {
             console.log('Service worker registration succeeded:', registeration)
           }).catch((error) => {
             console.log(`Service worker registration failed: ${error}`);
-      /*try {
-        const register = navigator.serviceWorker.register("./sw.js");
-        if (register.acti)
-          console.log("SW Successfully registered");
-      } catch (err){
-          console.log("SW failed to register");
-      }*/
     });
     });
   }
